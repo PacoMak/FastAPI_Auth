@@ -17,6 +17,10 @@ class UserRepository:
         statement = select(User).where(User.name == username)
         return self.session.exec(statement).first()
 
+    def get_user_by_email(self, email: str):
+        statement = select(User).where(User.email == email)
+        return self.session.exec(statement).first()
+
     def create_user(self, user: User):
         self.session.add(user)
         self.session.commit()

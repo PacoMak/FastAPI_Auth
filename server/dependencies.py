@@ -11,12 +11,12 @@ def get_current_user(
     auth_service: AuthServiceDep,
 ):
     payload = auth_service.decode_jwt(token)
-    username = payload.get("sub")
-    if not username:
+    email = payload.get("sub")
+    if not email:
         raise HTTPException(
             status_code=401, detail="Invalid authentication credentials"
         )
-    user = user_service.get_user_by_username(username)
+    user = user_service.get_user_by_email(email)
     if not user:
         raise HTTPException(
             status_code=401, detail="Invalid authentication credentials"

@@ -8,7 +8,6 @@ from server.models.user_model import User
 from server.services.auth_service import (
     AuthServiceDep,
     login_form_schema,
-    oauth2_token_scheme,
 )
 from server.services.user_service import UserServiceDep
 
@@ -50,8 +49,8 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return auth_service.create_tokens(
-        access_data={"sub": user.name},
-        refresh_data={"sub": user.name},
+        access_data={"sub": user.email},
+        refresh_data={"sub": user.email},
     )
 
 
@@ -68,17 +67,22 @@ def refresh(
             detail="Invalid refresh token",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    username = payload.get("sub")
-    if not username:
+    email = payload.get("sub")
+    if not email:
         raise HTTPException(
             status_code=401, detail="Invalid authentication credentials"
         )
-    user = user_service.get_user_by_username(username)
+    user = user_service.get_user_by_email(email)
     if not user:
         raise HTTPException(
             status_code=401, detail="Invalid authentication credentials"
         )
     return auth_service.create_tokens(
-        access_data={"sub": user.name},
-        refresh_data={"sub": user.name},
+        access_data={"sub": user.email},
+        refresh_data={"sub": user.email},
     )
+
+
+@user_router.patch("/me", response_model=UserPublic)
+def update_user():
+    pass

@@ -17,6 +17,9 @@ class UserService:
     def get_user_by_email(self, email: str):
         return self.user_repository.get_user_by_email(email)
 
+    def update_user(self, user):
+        return self.user_repository.update_user(user)
+
     def create_user(self, user):
         return self.user_repository.create_user(user)
 

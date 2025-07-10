@@ -3,7 +3,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 
 from server.dependencies import CurrentUserDep
 from server.dtos.token_dtos import Token, TokenRefresh
-from server.dtos.user_dtos import UserCreate, UserPublic
+from server.dtos.user_dtos import UserCreate, UserPublic, UserUpdate
 from server.models.user_model import User
 from server.services.auth_service import (
     AuthServiceDep,
@@ -84,5 +84,22 @@ def refresh(
 
 
 @user_router.patch("/me", response_model=UserPublic)
-def update_user():
-    pass
+def update_user(
+    current_user: CurrentUserDep,
+    req: UserUpdate,
+    user_service: UserServiceDep,
+    auth_service: AuthServiceDep,
+):
+    if req.name:
+        current_user.name = req.name
+    if not req.old_password and not req.new_password:
+        return user_service.update_user(current_user)
+    if not auth_service.verify_password(req.old_password, current_user.hash_password):
+        raise HTTPException(
+            status_code=401,
+            detail="Old password is incorrect",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    current_user.hash_password = auth_service.get_password_hash(req.new_password)
+    user_service.update_user(current_user)
+    return current_user

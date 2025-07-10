@@ -21,6 +21,12 @@ class UserRepository:
         statement = select(User).where(User.email == email)
         return self.session.exec(statement).first()
 
+    def update_user(self, user: User):
+        self.session.add(user)
+        self.session.commit()
+        self.session.refresh(user)
+        return user
+
     def create_user(self, user: User):
         self.session.add(user)
         self.session.commit()

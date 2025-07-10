@@ -5,7 +5,7 @@ from server.services.auth_service import AuthServiceDep, oauth2_token_scheme
 from server.services.user_service import UserServiceDep
 
 
-def get_current_user(
+async def get_current_user(
     token: Annotated[str, Depends(oauth2_token_scheme)],
     user_service: UserServiceDep,
     auth_service: AuthServiceDep,
@@ -16,7 +16,7 @@ def get_current_user(
         raise HTTPException(
             status_code=401, detail="Invalid authentication credentials"
         )
-    user = user_service.get_user_by_email(email)
+    user = await user_service.get_user_by_email(email)
     if not user:
         raise HTTPException(
             status_code=401, detail="Invalid authentication credentials"

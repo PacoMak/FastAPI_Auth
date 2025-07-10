@@ -1,22 +1,40 @@
 from typing import Annotated
-from sqlalchemy import create_engine
-from sqlmodel import Session, SQLModel
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlmodel import SQLModel
 from fastapi import Depends
 from .models.item_model import Item
 from .models.user_model import User
+from .settings.config import get_settings
 
-engine = create_engine(
-    "mysql+pymysql://fastapi_user:fastapi_password@mysql:3306/fastapi_auth", echo=True
-)
-
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+# Global variables for engine and session maker
+engine = None
+async_session_maker = None
 
 
-def get_session():
-    with Session(engine) as session:
+def initialize_database():
+    global engine, async_session_maker
+    settings = get_settings()
+
+    database_url = settings.database_url
+
+    engine = create_async_engine(database_url, echo=False)
+    async_session_maker = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
+
+
+# Initialize database on import
+initialize_database()
+
+
+async def create_db_and_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
+
+
+async def get_session():
+    async with async_session_maker() as session:
         yield session
 
 
-SessionDep = Annotated[Session, Depends(get_session)]
+SessionDep = Annotated[AsyncSession, Depends(get_session)]

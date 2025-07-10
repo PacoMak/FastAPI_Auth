@@ -16,26 +16,26 @@ user_router = APIRouter(prefix="/user", tags=["user"])
 
 
 @user_router.get("/me", response_model=UserPublic)
-def get_current_user(currentUser: CurrentUserDep):
+async def get_current_user(currentUser: CurrentUserDep):
     return currentUser
 
 
 @user_router.post("/register", response_model=UserPublic)
-def register_user(
+async def register_user(
     req: UserCreate, auth_service: AuthServiceDep, user_service: UserServiceDep
 ):
     hash_password = auth_service.get_password_hash(req.password)
     user = User(email=req.email, name=req.name, hash_password=hash_password)
-    return user_service.create_user(user)
+    return await user_service.create_user(user)
 
 
 @user_router.post("/login", response_model=Token)
-def login(
+async def login(
     form_data: login_form_schema,
     auth_service: AuthServiceDep,
     user_service: UserServiceDep,
 ):
-    user = user_service.get_user_by_username(form_data.username)
+    user = await user_service.get_user_by_username(form_data.username)
     if not user:
         raise HTTPException(
             status_code=404,
@@ -55,7 +55,7 @@ def login(
 
 
 @user_router.post("/refresh", response_model=Token)
-def refresh(
+async def refresh(
     req: TokenRefresh,
     auth_service: AuthServiceDep,
     user_service: UserServiceDep,
@@ -72,7 +72,7 @@ def refresh(
         raise HTTPException(
             status_code=401, detail="Invalid authentication credentials"
         )
-    user = user_service.get_user_by_email(email)
+    user = await user_service.get_user_by_email(email)
     if not user:
         raise HTTPException(
             status_code=401, detail="Invalid authentication credentials"
@@ -84,7 +84,7 @@ def refresh(
 
 
 @user_router.patch("/me", response_model=UserPublic)
-def update_user(
+async def update_user(
     current_user: CurrentUserDep,
     req: UserUpdate,
     user_service: UserServiceDep,
@@ -93,7 +93,7 @@ def update_user(
     if req.name:
         current_user.name = req.name
     if not req.old_password and not req.new_password:
-        return user_service.update_user(current_user)
+        return await user_service.update_user(current_user)
     if not auth_service.verify_password(req.old_password, current_user.hash_password):
         raise HTTPException(
             status_code=401,
@@ -101,5 +101,5 @@ def update_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     current_user.hash_password = auth_service.get_password_hash(req.new_password)
-    user_service.update_user(current_user)
+    await user_service.update_user(current_user)
     return current_user

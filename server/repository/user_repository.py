@@ -10,27 +10,29 @@ class UserRepository:
     def __init__(self, session: SessionDep):
         self.session = session
 
-    def get_user_by_id(self, id: str):
-        return self.session.get(User, id)
+    async def get_user_by_id(self, id: str):
+        return await self.session.get(User, id)
 
-    def get_user_by_username(self, username: str):
+    async def get_user_by_username(self, username: str):
         statement = select(User).where(User.name == username)
-        return self.session.exec(statement).first()
+        result = await self.session.execute(statement)
+        return result.scalar_one_or_none()
 
-    def get_user_by_email(self, email: str):
+    async def get_user_by_email(self, email: str):
         statement = select(User).where(User.email == email)
-        return self.session.exec(statement).first()
+        result = await self.session.execute(statement)
+        return result.scalar_one_or_none()
 
-    def update_user(self, user: User):
+    async def update_user(self, user: User):
         self.session.add(user)
-        self.session.commit()
-        self.session.refresh(user)
+        await self.session.commit()
+        await self.session.refresh(user)
         return user
 
-    def create_user(self, user: User):
+    async def create_user(self, user: User):
         self.session.add(user)
-        self.session.commit()
-        self.session.refresh(user)
+        await self.session.commit()
+        await self.session.refresh(user)
         return user
 
 

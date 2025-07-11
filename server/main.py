@@ -1,17 +1,18 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from server.database import SessionDep
-from server.models.item_model import Item
 from server.settings.config import SettingsDep
 from server.routers.user import user_router
 from server.database import create_db_and_tables
 
-app = FastAPI()
 
-
-@app.on_event("startup")
-async def on_startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await create_db_and_tables()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/env")

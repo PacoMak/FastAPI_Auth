@@ -35,19 +35,16 @@ async def login(
     auth_service: AuthServiceDep,
     user_service: UserServiceDep,
 ):
+    invalid_credentials = HTTPException(
+        status_code=401,
+        detail="Invalid credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     user = await user_service.get_user_by_username(form_data.username)
     if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="Invalid credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise invalid_credentials
     if not auth_service.verify_password(form_data.password, user.hash_password):
-        raise HTTPException(
-            status_code=404,
-            detail="Invalid credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise invalid_credentials
     return auth_service.create_tokens(
         access_data={"sub": user.email},
         refresh_data={"sub": user.email},

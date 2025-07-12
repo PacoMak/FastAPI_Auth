@@ -28,3 +28,12 @@ async def test_user_refresh_token(setup_database, async_client):
     assert "access_token" in response_data
     assert "refresh_token" in response_data
     assert response_data["token_type"] == "bearer"
+
+
+@pytest.mark.asyncio
+async def test_user_refresh_token_unauthenticated(async_client):
+    response = await get_refresh_token(async_client, None)
+    assert response.status_code == 422
+
+    response = await get_refresh_token(async_client, "invalid_refresh_token")
+    assert response.status_code == 401

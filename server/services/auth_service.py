@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from server.dtos.token_dtos import Token
@@ -31,11 +31,16 @@ class AuthService:
         )
 
     def decode_jwt(self, access_token: str):
-        return jwt.decode(
-            access_token,
-            self.setting.secret_key,
-            algorithms=[self.setting.algorithm],
-        )
+        try:
+            return jwt.decode(
+                access_token,
+                self.setting.secret_key,
+                algorithms=[self.setting.algorithm],
+            )
+        except jwt.ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="Token has expired")
+        except (jwt.InvalidSignatureError, jwt.DecodeError):
+            raise HTTPException(status_code=401, detail="Invalid token signature")
 
     def create_access_token(self, data: dict):
         to_encode = data.copy()

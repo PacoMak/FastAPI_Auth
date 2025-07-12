@@ -6,25 +6,13 @@ from .models.item_model import Item
 from .models.user_model import User
 from .settings.config import get_settings
 
-# Global variables for engine and session maker
-engine = None
-async_session_maker = None
+settings = get_settings()
+database_url = settings.database_url
 
-
-def initialize_database():
-    global engine, async_session_maker
-    settings = get_settings()
-
-    database_url = settings.database_url
-
-    engine = create_async_engine(database_url, echo=False)
-    async_session_maker = async_sessionmaker(
-        engine, class_=AsyncSession, expire_on_commit=False
-    )
-
-
-# Initialize database on import
-initialize_database()
+engine = create_async_engine(database_url, echo=False)
+async_session_maker = async_sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
 
 
 async def create_db_and_tables():

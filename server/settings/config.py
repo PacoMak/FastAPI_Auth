@@ -6,7 +6,7 @@ from pathlib import Path
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).parent / ".env", extra="allow"
+        env_file=Path(__file__).parent / ".env.dev", extra="allow"
     )
 
 

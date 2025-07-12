@@ -20,7 +20,7 @@ async def get_current_user(currentUser: CurrentUserDep):
     return currentUser
 
 
-@user_router.post("/register", response_model=UserPublic)
+@user_router.post("/register", response_model=UserPublic, status_code=201)
 async def register_user(
     req: UserCreate, auth_service: AuthServiceDep, user_service: UserServiceDep
 ):

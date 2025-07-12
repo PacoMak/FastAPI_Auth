@@ -25,7 +25,19 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+  test_mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: fastapi_auth
+      MYSQL_USER: fastapi_user
+      MYSQL_PASSWORD: fastapi_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - test_mysql_data:/var/lib/test_mysql
 
 
 volumes:
   mysql_data:
+  test_mysql_data:

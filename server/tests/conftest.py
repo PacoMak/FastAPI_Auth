@@ -1,6 +1,8 @@
+import asyncio
 from pathlib import Path
 from httpx import ASGITransport, AsyncClient
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import pytest
 import pytest_asyncio
 from server.database import get_session
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
@@ -51,6 +53,7 @@ async def setup_database():
     await create_db_and_tables()
     yield
     await drop_db_and_tables()
+    await engine.dispose()
 
 
 @pytest_asyncio.fixture(scope="function")

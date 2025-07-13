@@ -10,4 +10,5 @@ class UserBase(SQLModel):
 
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    hash_password: str = Field(max_length=60, nullable=False)
+    google_id: str = Field(max_length=100, nullable=True)
+    hash_password: str = Field(max_length=60, nullable=True)

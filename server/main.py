@@ -1,12 +1,11 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 from server.settings.config import SettingsDep, get_settings
 from server.routers.user import user_router
-from server.database import create_db_and_tables
+from server.database import create_db_and_tables, drop_db_and_tables
 from server.routers.oauth.google import google_router
 from server.routers.oauth.password import password_router
 from starlette.middleware.sessions import SessionMiddleware
@@ -33,18 +32,7 @@ async def get_environment_variables(settings: SettingsDep):
 
 @app.get("/")
 def index(req: Request):
-    user = req.session.get("user")
-    if user:
-        return RedirectResponse("/welcome")
-    return templates.TemplateResponse("home.html", context={"request": req})
-
-
-@app.get("/welcome")
-async def welcome(request: Request):
-    user = request.session.get("user")
-    if user:
-        return {"message": f"Welcome {user['name']}!"}
-    return RedirectResponse("/")
+    return templates.TemplateResponse("index.html", context={"request": req})
 
 
 app.include_router(user_router)

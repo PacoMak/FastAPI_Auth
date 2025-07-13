@@ -57,9 +57,7 @@ class AuthService:
     def create_tokens(self, access_data: dict, refresh_data: dict):
         access_token = self.create_access_token(access_data)
         refresh_token = self.create_refresh_token(refresh_data)
-        return Token(
-            access_token=access_token, refresh_token=refresh_token, token_type="bearer"
-        )
+        return access_token, refresh_token
 
 
 AuthServiceDep = Annotated[AuthService, Depends()]

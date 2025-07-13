@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends
 from sqlmodel import select
-
+import uuid
 from server.database import SessionDep
 from server.models.user_model import User
 
@@ -10,7 +10,7 @@ class UserRepository:
     def __init__(self, session: SessionDep):
         self.session = session
 
-    async def get_user_by_id(self, id: str):
+    async def get_user_by_id(self, id: uuid.UUID):
         return await self.session.get(User, id)
 
     async def get_user_by_username(self, username: str):

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/index.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="field">
+            <label for="username">username:</label>
+            <input type="text" name="username" id="username">
+        </div>
+        <div class="field">
+            <label for="password">password:</label>
+            <input type="password" name="password" id="password">
+        </div>
+
+        <button id="login">Login</button>
+        <a href="/login/google">
+        <button id="google-login" class="google-btn">
+            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" class="google-logo">
+            Sign in with Google
+        </button>
+        </a>
+
+    </div>
+
+    <!-- Placeholder for Google Sign-In SDK (to be implemented) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</body>
+</html>

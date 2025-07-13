@@ -7,7 +7,7 @@ from server.tests.user.test_user import test_user
 
 
 async def create_user(async_client):
-    response = await async_client.post("/user/register", json=test_user)
+    response = await async_client.post("/login/password/register", json=test_user)
     return response
 
 

@@ -1,8 +1,7 @@
-import asyncio
+from functools import lru_cache
 from pathlib import Path
 from httpx import ASGITransport, AsyncClient
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import pytest
 import pytest_asyncio
 from server.database import get_session
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
@@ -17,6 +16,7 @@ class TestSettings(BaseSettings):
     )
 
 
+@lru_cache()
 def get_test_settings() -> TestSettings:
     return TestSettings()
 

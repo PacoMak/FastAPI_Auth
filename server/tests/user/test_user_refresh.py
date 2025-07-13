@@ -9,11 +9,8 @@ from server.tests.user.test_user_register import create_user
 
 
 async def get_refresh_token(async_client, refresh_token):
-    if refresh_token is None:
-        return await async_client.post("/user/refresh")
-    return await async_client.post(
-        "/user/refresh", json={"refresh_token": refresh_token}
-    )
+    body = {"refresh_token": refresh_token} if refresh_token else {}
+    return await async_client.post("/login/password/refresh", json=body)
 
 
 @pytest.mark.asyncio

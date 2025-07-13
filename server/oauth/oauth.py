@@ -14,7 +14,3 @@ oauth.register(
         "redirect_uri": setting.google_redirect_uri,
     },
 )
-
-oauth.register(
-    name="password",
-)

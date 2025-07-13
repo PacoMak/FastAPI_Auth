@@ -10,7 +10,7 @@ from server.services.user_service import UserServiceDep
 from server.settings.config import SettingsDep
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_token_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
+oauth2_token_scheme = OAuth2PasswordBearer(tokenUrl="/login/password")
 login_form_schema = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 

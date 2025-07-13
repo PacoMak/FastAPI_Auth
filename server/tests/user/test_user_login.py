@@ -10,7 +10,7 @@ async def login(async_client, user=test_user):
     }
 
     response = await async_client.post(
-        "/user/login",
+        "/login/password",
         data=login_data,
     )
     return response
